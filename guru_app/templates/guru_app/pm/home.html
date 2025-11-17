@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-sky-100 to-indigo-100 min-h-screen flex flex-col">
+
+  <!--  Navbar Guru -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-blue-800 flex items-center gap-2">
+        <i class="fas fa-chalkboard-teacher text-4xl text-sky-500"></i>
+        Dashboard Guru PM
+      </h1>
+      <div class="flex items-center gap-4">
+        <!-- Inbox -->
+        <a href="{% url 'inbox_guru_pm' %}"
+           class="relative flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-lg transition">
+          <i class="fas fa-envelope text-xl"></i>
+          Inbox
+          {% if inbox_unread_count > 0 %}
+          <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            {{ inbox_unread_count }}
+          </span>
+          {% endif %}
+        </a>
+
+        <!-- Logout -->
+        <a id="logout-btn" href="{% url 'logout' %}"
+           class="flex items-center gap-2 bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 hover:opacity-90 text-white px-4 py-2 rounded-xl font-medium transition">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-6 py-10 w-full">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-700 via-sky-600 to-indigo-600 bg-clip-text text-transparent">
+        Selamat Datang, {{ user.first_name }} {{ user.last_name }} 👋
+      </h2>
+      <p class="text-gray-600 mt-2 text-lg">Role: <span class="font-semibold">Guru</span></p>
+    </div>
+
+    <!--  Card Section -->
+    <div class="flex flex-wrap justify-center gap-8 mb-14">
+      <div
+        class="bg-white rounded-2xl shadow-md p-6 w-72 flex flex-col items-center text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <i class="fas fa-user-graduate text-4xl mb-3 text-slate-600"></i>
+        <h3 class="font-bold text-gray-800 text-lg mb-1">Data Siswa PKL</h3>
+        <p class="text-sm text-gray-500 mb-4 text-center">Lihat daftar siswa yang mendaftar PKL</p>
+        <a href="{% url 'data_pm' %}"
+           class="bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 hover:opacity-90 text-white px-5 py-2 rounded-xl font-medium transition">
+          Lihat
+        </a>
+      </div>
+
+      <div
+        class="bg-white rounded-2xl shadow-md p-6 w-72 flex flex-col items-center text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <i class="fas fa-building text-4xl mb-3 text-slate-600"></i>
+        <h3 class="font-bold text-gray-800 text-lg mb-1">Data Perusahaan</h3>
+        <p class="text-sm text-gray-500 mb-4 text-center">Lihat daftar perusahaan tempat PKL</p>
+        <a href="{% url 'perusahaan_pm_guru' %}"
+           class="bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 hover:opacity-90 text-white px-5 py-2 rounded-xl font-medium transition">
+          Lihat
+        </a>
+      </div>
+    </div>
+
+    <!--  Status Table -->
+    <div id="status-table" class="bg-white shadow-lg rounded-2xl overflow-x-auto mt-6">
+      <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-tasks text-blue-600"></i> Status Pendaftaran Siswa
+        </h3>
+      </div>
+
+      <table class="min-w-full border-collapse">
+        <thead class="bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 text-white">
+          <tr>
+            <th class="py-3 px-4 text-left">No</th>
+            <th class="py-3 px-4 text-left">Siswa</th>
+            <th class="py-3 px-4 text-left">Perusahaan</th>
+            <th class="py-3 px-4 text-left">Status</th>
+            <th class="py-3 px-4 text-left">Tanggal Wawancara</th>
+            <th class="py-3 px-4 text-left">Tanggal Pendaftaran</th>
+            <th class="py-3 px-4 text-left">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pendaftarans %}
+          <tr class="border-b hover:bg-blue-50 transition">
+            <td class="py-3 px-4">{{ forloop.counter }}</td>
+            <td class="py-3 px-4 font-semibold">
+              <a href="{% url 'detail_siswa_pm' p.siswa.nisn p.id %}" class="text-gray-800 hover:text-blue-600 hover:underline transition duration-200">
+                {{ p.siswa.first_name }} {{ p.siswa.last_name }}
+              </a>
+            </td>
+            <td class="py-3 px-4">{{ p.perusahaan.nama_perusahaan }}</td>
+            <td class="py-3 px-4">
+              {% if p.status == "diterima" %}
+              <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium">Diterima</span>
+              {% elif p.status == "ditolak" %}
+              <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">Ditolak</span>
+              {% elif p.status == "wawancara" %}
+              <span class="bg-blue-400 text-white px-3 py-1 rounded-full text-sm font-medium">Wawancara</span>
+              {% elif p.status == "dipindahkan" %}
+              <span class="bg-yellow-400 text-white px-3 py-1 rounded-full text-sm font-medium">Dipindahkan</span>
+              {% else %}
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">Menunggu</span>
+              {% endif %}
+            </td>
+            <td class="py-3 px-4">
+              {% if p.status == "wawancara" %}
+                {% if p.tanggal_wawancara %}
+                  {{ p.tanggal_wawancara|date:"d M Y H:i" }}
+                {% else %}
+                  <span class="text-gray-400 italic">Belum dijadwalkan</span>
+                {% endif %}
+              {% else %}
+                <span class="text-gray-400">-</span>
+              {% endif %}
+            </td>
+            <td class="py-3 px-4 text-gray-700 font-medium">
+              {% if p.tanggal_daftar %}
+                {{ p.tanggal_daftar|date:"d M Y, H:i" }}
+              {% else %}
+                <span class="text-gray-400 italic">Belum tercatat</span>
+              {% endif %}
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex gap-2 flex-nowrap overflow-x-auto">
+                <a href="{% url 'terima_siswa_pm' p.siswa.nisn %}" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">Terima</a>
+                <a href="{% url 'tolak_siswa_pm' p.siswa.nisn %}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">Tolak</a>
+                <a href="{% url 'jadwal_wawancara_pm' p.siswa.nisn %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">Wawancara</a>
+                <a href="{% url 'menunggu_siswa_pm' p.siswa.nisn %}" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">Menunggu</a>
+                <a href="{% url 'pindahkan_siswa_pm' p.siswa.nisn %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">Pindahkan</a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-6 text-gray-500">
+              <i class="fas fa-info-circle text-slate-400"></i> Belum ada siswa mendaftar
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 text-white py-6 text-center mt-auto shadow-inner">
+    <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+      <i class="fas fa-graduation-cap"></i>
+      ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL PM
+    </p>
+  </footer>
+
+  <!-- Notifikasi -->
+  {% if messages %}
+  <div class="fixed left-6 top-[90px] z-50 w-full max-w-sm" id="messages-container">
+    <div class="space-y-3">
+      {% for message in messages %}
+      <div class="notif flex items-center justify-between gap-3 px-5 py-4 rounded-2xl shadow-lg
+        {% if 'success' in message.tags %} bg-gradient-to-r from-blue-400 to-indigo-500 text-white
+        {% elif 'error' in message.tags %} bg-gradient-to-r from-red-400 to-red-500 text-white
+        {% elif 'wawancara' in message.tags %} bg-gradient-to-r from-blue-400 to-blue-600 text-white
+        {% elif 'dipindahkan' in message.tags %} bg-gradient-to-r from-yellow-400 to-yellow-500 text-white
+        {% elif 'info' in message.tags %} bg-gradient-to-r from-gray-400 to-gray-500 text-white
+        {% endif %} opacity-0 translate-y-[-10px] animate-fade-in">
+        <div class="flex items-center gap-2">
+          {% if 'success' in message.tags %}<i class="fas fa-circle-check animate-bounce"></i>{% endif %}
+          {% if 'error' in message.tags %}<i class="fas fa-triangle-exclamation animate-bounce"></i>{% endif %}
+          {% if 'wawancara' in message.tags %}<i class="fas fa-calendar-check animate-bounce"></i>{% endif %}
+          {% if 'dipindahkan' in message.tags %}<i class="fas fa-exchange-alt animate-bounce"></i>{% endif %}
+          {% if 'info' in message.tags %}<i class="fas fa-hourglass-half animate-bounce"></i>{% endif %}
+          <span>{{ message }}</span>
+        </div>
+        <button class="close-btn hover:opacity-75 text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.5s forwards; }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const logoutBtn = document.getElementById("logout-btn");
+      if(logoutBtn){
+        logoutBtn.addEventListener("click", (event)=>{
+          event.preventDefault();
+          if(confirm("Apakah Anda yakin ingin logout?")){
+            localStorage.setItem("logout_time", Date.now());
+            window.location.href = logoutBtn.href;
+          }
+        });
+      }
+      window.addEventListener("storage", (e)=>{
+        if(e.key==="logout_time"){
+          alert("🔒 Anda telah logout di tab lain.");
+          window.location.href="{% url 'logout' %}";
+        }
+      });
+
+      const notifs = document.querySelectorAll(".notif");
+      notifs.forEach((notif,index)=>{
+        setTimeout(()=>notif.classList.add("animate-fade-in"), index*200);
+        setTimeout(()=>{
+          notif.style.transition="opacity 0.5s ease, transform 0.5s ease";
+          notif.style.opacity="0";
+          notif.style.transform="translateY(-10px)";
+          setTimeout(()=>notif.remove(),600);
+        }, 3000 + index*200);
+      });
+
+      document.querySelectorAll(".close-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const notif = btn.closest(".notif");
+          notif.style.transition="opacity 0.3s ease, transform 0.3s ease";
+          notif.style.opacity="0";
+          notif.style.transform="translateY(-10px)";
+          setTimeout(()=>notif.remove(),400);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+
+<body class="bg-gradient-to-br from-red-50 via-red-100 to-red-200 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-red-700 flex items-center gap-2">
+        <i class="fas fa-network-wired text-3xl text-red-600"></i> Detail Pendaftaran PKL
+      </h1>
+      <a href="{% url 'data_siswa_tkj' %}"
+        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </a>
+    </div>
+  </nav>
+
+  <main class="flex-grow flex justify-center items-start px-4 py-12">
+    <div class="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
+      <h2 class="text-2xl font-bold text-red-700 mb-6 flex items-center gap-2">
+        <i class="fas fa-file-alt text-red-600"></i> Detail Pendaftaran PKL
+      </h2>
+
+      <div class="space-y-3 text-gray-800">
+        <p><strong>NISN:</strong> {{ siswa.nisn }}</p>
+        <p><strong>Nama:</strong> {{ siswa.first_name }} {{ siswa.last_name }}</p>
+        <p><strong>Kelas:</strong> {{ pendaftaran.kelas }}</p>
+        <p><strong>Perusahaan:</strong> {{ pendaftaran.perusahaan.nama_perusahaan }}</p>
+        <p><strong>Alasan:</strong> {{ pendaftaran.alasan }}</p>
+
+        {% if pendaftaran.cv %}
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+          <a href="{{ pendaftaran.cv.url }}" target="_blank"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+            <i class="fas fa-eye"></i> Lihat CV
+          </a>
+          <a href="{% url 'download_cv_tkj' siswa.nisn %}"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+            <i class="fas fa-download"></i> Download CV
+          </a>
+        </div>
+        {% else %}
+        <p class="text-red-500 mt-3 flex items-center gap-2">
+          <i class="fas fa-times-circle"></i> CV belum diunggah.
+        </p>
+        {% endif %}
+      </div>
+  </main>
+
+  <footer class="bg-gradient-to-r from-red-600 to-red-500 text-white py-6 text-center mt-auto shadow-inner">
+    <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+      <i class="fas fa-graduation-cap text-white"></i>
+      ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL
+    </p>
+  </footer>
+</body>
+</html>

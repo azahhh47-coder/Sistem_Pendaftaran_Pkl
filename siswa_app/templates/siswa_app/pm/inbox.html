@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 min-h-screen flex flex-col">
+
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+        <i class="fas fa-envelope text-sky-500 text-4xl"></i> Inbox Siswa PM
+      </h1>
+      <a href="{% url 'dashboard_siswa_pm' %}"
+        class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-medium transition">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </a>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Pesan Masuk</h2>
+
+    {% if inbox %}
+    <div class="space-y-4">
+
+      {% for pesan in inbox %}
+      <div class="bg-white p-5 rounded-xl shadow-md border border-blue-100 hover:shadow-lg transition">
+
+        <!-- 🔹 Nama Pengirim -->
+        <div class="flex justify-between items-center mb-2">
+
+          {% if pesan.dikirim_oleh == "guru" %}
+            <p class="font-semibold text-blue-700">
+              {{ pesan.guru.first_name }} {{ pesan.guru.last_name }}
+            </p>
+          {% else %}
+            <p class="font-semibold text-gray-500">
+              Anda mengirim pesan ke Guru
+            </p>
+          {% endif %}
+
+          <span class="text-sm text-gray-500">{{ pesan.tanggal_kirim|date:"d M Y, H:i" }}</span>
+        </div>
+
+        <!-- 🔹 Isi pesan -->
+        <p class="text-gray-700 mb-2">{{ pesan.pesan }}</p>
+
+        <!-- 🔹 Status PKL -->
+        {% if pesan.dikirim_oleh == "guru" %}
+        <span class="text-xs px-3 py-1 rounded-full
+          {% if pesan.status == 'diterima' %}bg-blue-100 text-blue-700
+          {% elif pesan.status == 'ditolak' %}bg-red-100 text-red-700
+          {% elif pesan.status == 'wawancara' %}bg-sky-100 text-sky-700
+          {% elif pesan.status == 'menunggu' %}bg-yellow-100 text-yellow-700
+          {% else %}bg-gray-100 text-gray-700{% endif %}">
+          {{ pesan.status|title }}
+        </span>
+
+        <!-- 🔹 Tanggal wawancara -->
+        {% if pesan.status == "wawancara" and pesan.tanggal_wawancara %}
+        <p class="mt-2 text-sm text-sky-700">
+          📅 Jadwal Wawancara: {{ pesan.tanggal_wawancara }}
+        </p>
+        {% endif %}
+        {% endif %}
+
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center text-gray-500 py-10">
+      <i class="fas fa-inbox text-3xl mb-2"></i>
+      <p>Belum ada pesan masuk</p>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 text-white py-6 text-center mt-auto shadow-inner">
+    <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+      <i class="fas fa-graduation-cap text-white"></i>
+      ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL PM
+    </p>
+  </footer>
+
+</body>
+</html>

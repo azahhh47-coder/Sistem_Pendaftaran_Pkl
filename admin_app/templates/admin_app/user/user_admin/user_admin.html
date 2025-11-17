@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-blue-100">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+        <i class="fas fa-users-cog text-blue-600"></i> Kelola User Admin
+      </h1>
+      <a href="{% url 'dashboard_user' %}"
+        class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-transform duration-300">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </a>
+    </div>
+  </nav>
+
+  <!-- Tambah -->
+  <main class="max-w-6xl mx-auto px-6 py-12 w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">{{ title }}</h2>
+      <a href="{% url 'admin_create' %}"
+        class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-transform duration-300">
+        <i class="fas fa-user-plus"></i> Tambah Admin Baru
+      </a>
+    </div>
+
+    <!-- Notifikasi -->
+    {% if messages %}
+    <div id="messages" class="mb-6 space-y-2">
+      {% for message in messages %}
+      <div class="px-4 py-3 rounded-xl shadow-md text-sm font-medium flex items-center justify-between
+            {% if message.tags == 'success' %} bg-gradient-to-r from-blue-600 to-cyan-600 text-white
+            {% elif message.tags == 'error' %} bg-gradient-to-r from-red-400 to-rose-500 text-white
+            {% else %} bg-gradient-to-r from-gray-400 to-gray-500 text-white {% endif %}">
+        <div>
+          <i class="fas 
+                {% if message.tags == 'success' %}fa-circle-check
+                {% elif message.tags == 'error' %}fa-circle-exclamation
+                {% else %}fa-info-circle{% endif %} mr-2"></i>
+          {{ message }}
+        </div>
+        <button onclick="this.parentElement.remove()" class="ml-4 text-lg font-bold">&times;</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Table -->
+    <div class="overflow-x-auto bg-white shadow-lg rounded-2xl">
+      <table class="min-w-full border border-gray-200 rounded-2xl">
+        <thead class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+          <tr>
+            <th class="py-3 px-4 text-left">Username</th>
+            <th class="py-3 px-4 text-left">Email</th>
+            <th class="py-3 px-4 text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr class="border-b hover:bg-blue-50 transition">
+            <td class="py-3 px-4">{{ user.username }}</td>
+            <td class="py-3 px-4">{{ user.email }}</td>
+            <td class="py-3 px-4 text-center flex justify-center gap-2">
+              <!-- Edit -->
+              <a href="{% url 'admin_edit' user.id %}"
+                class="bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1 transition">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <!-- Delete -->
+              <form action="{% url 'admin_delete' user.id %}" method="post"
+                onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                {% csrf_token %}
+                <button type="submit"
+                  class="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1 transition">
+                  <i class="fas fa-trash"></i> Hapus
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="text-center py-6 text-gray-500">
+              <i class="fas fa-info-circle"></i> Belum ada admin terdaftar
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-blue-700 to-cyan-500 text-white py-6 text-center mt-auto shadow-inner">
+    <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+      <i class="fas fa-graduation-cap text-white"></i>
+      ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL
+    </p>
+  </footer>
+
+  <!-- Notifikasi selama 3 detilk-->
+  <script>
+    setTimeout(() => {
+      const messages = document.getElementById("messages");
+      if (messages) messages.remove();
+    }, 3000); 
+  </script>
+</body>
+
+</html>

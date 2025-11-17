@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="bg-gradient-to-br from-purple-50 via-purple-100 to-purple-200 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-purple-700 flex items-center gap-2">
+                <i class="fas fa-microchip text-3xl text-purple-600"></i> Upload Foto Guru TEI
+            </h1>
+            <a href="{% url 'data_guru_tei' %}"
+                class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-medium transition">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 py-10">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-semibold text-center text-purple-700 mb-6">{{ title }}</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="foto_guru" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-camera mr-2 text-purple-600"></i> Pilih Foto Guru
+                    </label>
+                    <input type="file" name="foto_guru" id="foto_guru" accept="image/*"
+                        class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+                </div>
+
+                <div class="flex justify-between items-center mt-6">
+                    <button type="submit"
+                        class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-purple-600 to-purple-500 text-white py-6 text-center mt-auto shadow-inner">
+        <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+            <i class="fas fa-chalkboard-teacher text-white"></i>
+            ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL
+        </p>
+    </footer>
+
+</body>
+</html>

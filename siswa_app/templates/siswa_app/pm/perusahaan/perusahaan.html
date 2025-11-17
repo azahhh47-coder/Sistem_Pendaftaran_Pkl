@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                <i class="fas fa-store text-4xl text-sky-600"></i>Daftar Perusahaan PM
+            </h1>
+            <a href="{% url 'dashboard_siswa_pm' %}"
+                class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-medium transition">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </nav>
+
+    <!-- Container -->
+    <main class="max-w-6xl mx-auto px-6 py-12 w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">{{ title }}</h2>
+        </div>
+
+        <!-- Pesan Notifikasi -->
+        {% if messages %}
+        <div id="messages" class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl shadow-md text-sm font-medium flex items-center justify-between
+          {% if message.tags == 'success' %}bg-blue-100 text-blue-800 border border-blue-300
+          {% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300
+          {% else %}bg-sky-100 text-sky-800 border border-sky-300{% endif %}">
+                <div>
+                    <i class="fas 
+              {% if message.tags == 'success' %}fa-check-circle
+              {% elif message.tags == 'error' %}fa-times-circle
+              {% else %}fa-info-circle{% endif %} mr-2"></i>
+                    {{ message }}
+                </div>
+                <button onclick="this.parentElement.remove()" class="ml-4 text-lg font-bold">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Table -->
+        <div class="overflow-x-auto bg-white shadow-lg rounded-2xl">
+            <table class="min-w-full border border-gray-200 rounded-2xl">
+                <thead class="bg-gradient-to-r from-blue-600 to-sky-500 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">No</th>
+                        <th class="py-3 px-4 text-left">Nama Perusahaan</th>
+                        <th class="py-3 px-4 text-left">Alamat</th>
+                        <th class="py-3 px-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in perusahaan %}
+                    <tr class="border-b hover:bg-blue-50 transition">
+                        <td class="py-3 px-4">{{ forloop.counter }}</td>
+                        <td class="py-3 px-4 font-medium text-gray-700">{{ p.nama_perusahaan }}</td>
+                        <td class="py-3 px-4 text-gray-600">{{ p.alamat }}</td>
+                        <td class="py-3 px-4 text-center flex justify-center gap-2">
+                            <a href="{% url 'perusahaan_siswa_detail_pm' p.nama_perusahaan %}"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1 transition">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-gray-500">
+                            <i class="fas fa-info-circle"></i> Belum ada perusahaan PM terdaftar
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-blue-600 to-sky-500 text-white py-6 text-center mt-auto shadow-inner">
+        <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+            <i class="fas fa-graduation-cap text-white"></i>
+            ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL
+        </p>
+    </footer>
+</body>
+
+</html>

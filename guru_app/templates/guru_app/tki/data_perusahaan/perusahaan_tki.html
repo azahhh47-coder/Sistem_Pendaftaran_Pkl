@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-orange-700 flex items-center gap-2">
+                <i class="fas fa-chalkboard-teacher text-4xl text-orange-500 mb-2"></i>
+                Daftar Perusahaan TKI
+            </h1>
+            <a href="{% url 'dashboard_tki' %}"
+                class="flex items-center gap-2 bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-white px-4 py-2 rounded-xl font-medium hover:opacity-90 transition">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </nav>
+
+    <!-- Container -->
+    <main class="max-w-6xl mx-auto px-6 py-12 w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">{{ title }}</h2>
+            <a href="{% url 'perusahaan_tki_guru_create' %}"
+                class="bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 hover:opacity-90 transition">
+                <i class="fas fa-user-plus"></i> Tambah Perusahaan
+            </a>
+        </div>
+
+        <!-- Pesan Notifikasi -->
+        {% if messages %}
+        <div id="messages" class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl shadow-md text-sm font-medium flex items-center justify-between
+          {% if message.tags == 'success' %}bg-orange-100 text-orange-800 border border-orange-300
+          {% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300
+          {% else %}bg-amber-100 text-amber-800 border border-amber-300{% endif %}">
+                <div>
+                    <i class="fas 
+              {% if message.tags == 'success' %}fa-check-circle
+              {% elif message.tags == 'error' %}fa-times-circle
+              {% else %}fa-info-circle{% endif %}
+              mr-2"></i>
+                    {{ message }}
+                </div>
+                <button onclick="this.parentElement.remove()" class="ml-4 text-lg font-bold">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Table -->
+        <div class="overflow-x-auto bg-white shadow-lg rounded-2xl">
+            <table class="min-w-full border border-gray-200 rounded-2xl">
+                <thead class="bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">No</th>
+                        <th class="py-3 px-4 text-left">Nama Perusahaan</th>
+                        <th class="py-3 px-4 text-left">Alamat</th>
+                        <th class="py-3 px-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in perusahaan %}
+                    <tr class="border-b hover:bg-orange-50 transition">
+                        <td class="py-3 px-4">{{ forloop.counter }}</td>
+                        <td class="py-3 px-4 font-medium text-gray-700">{{ p.nama_perusahaan }}</td>
+                        <td class="py-3 px-4 text-gray-600">{{ p.alamat }}</td>
+                        <td class="py-3 px-4 text-center flex justify-center gap-2">
+                            <a href="{% url 'perusahaan_tki_guru_detail' p.nama_perusahaan %}"
+                                class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1 transition">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'perusahaan_tki_guru_delete' p.nama_perusahaan %}"
+                                onclick="return confirm('Yakin ingin menghapus perusahaan ini?')"
+                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1 transition">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-gray-500">
+                            <i class="fas fa-info-circle"></i> Belum ada perusahaan TKI terdaftar
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-white py-6 text-center mt-auto shadow-inner">
+        <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+            <i class="fas fa-graduation-cap text-white"></i>
+            ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL TKI
+        </p>
+    </footer>
+
+    <script>
+        setTimeout(() => {
+            const messages = document.getElementById("messages");
+            if (messages) messages.remove();
+        }, 3000);
+    </script>
+</body>
+
+</html>

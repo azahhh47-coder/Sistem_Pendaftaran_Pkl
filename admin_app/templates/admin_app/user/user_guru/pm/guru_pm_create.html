@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Guru PM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gradient-to-br from-sky-50 via-sky-100 to-blue-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <div class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-sky-100">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-sky-700 flex items-center gap-2">
+        <i class="fas fa-store text-sky-500"></i> Tambah Guru PM
+      </h1>
+      <a href="{% url 'tabel_pm' %}"
+        class="flex items-center gap-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-transform duration-300">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </a>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <main class="max-w-xl mx-auto px-6 py-12 w-full">
+    <div class="bg-white shadow-xl rounded-2xl p-8">
+      <div id="alertBox"
+        class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-medium text-center transition-all duration-500"></div>
+
+      <form method="post" class="space-y-5" onsubmit="return validateForm()">
+        {% csrf_token %}
+
+        <div>
+          <label for="first_name" class="block text-gray-700 font-medium mb-1">Nama Depan</label>
+          <input type="text" name="first_name" id="first_name"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required
+            value="{{ request.POST.first_name|default:'' }}">
+        </div>
+
+        <div>
+          <label for="last_name" class="block text-gray-700 font-medium mb-1">Nama Belakang</label>
+          <input type="text" name="last_name" id="last_name"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required
+            value="{{ request.POST.last_name|default:'' }}">
+        </div>
+
+        <div>
+          <label for="nip" class="block text-gray-700 font-medium mb-1">NIP (16 digit)</label>
+          <input type="text" name="nip" id="nip"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required
+            value="{{ request.POST.nip|default:'' }}">
+        </div>
+
+        <div>
+          <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
+          <input type="email" name="email" id="email"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required
+            value="{{ request.POST.email|default:'' }}">
+        </div>
+
+        <!-- Password -->
+        <div class="relative">
+          <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+          <input type="text" name="password" id="password"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required>
+          <i class="fa fa-eye-slash absolute right-3 top-10 cursor-pointer text-gray-500"
+            onclick="togglePassword('password', this)"></i>
+        </div>
+
+        <div class="relative">
+          <label for="confirm_password" class="block text-gray-700 font-medium mb-1">Konfirmasi Password</label>
+          <input type="text" name="confirm_password" id="confirm_password"
+            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none" required>
+          <i class="fa fa-eye-slash absolute right-3 top-10 cursor-pointer text-gray-500"
+            onclick="togglePassword('confirm_password', this)"></i>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:shadow-lg hover:scale-105 text-white font-semibold py-2 rounded-xl transition-transform duration-300 flex justify-center items-center gap-2">
+          <i class="fas fa-save"></i> Simpan
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-sky-600 to-blue-500 text-white py-6 text-center mt-auto shadow-inner">
+    <p class="text-sm tracking-wide flex justify-center items-center gap-2">
+      <i class="fas fa-graduation-cap text-white"></i>
+      ©2025 SMKN 4 Padalarang - Sistem Pendaftaran PKL
+    </p>
+  </footer>
+
+  <script>
+    function togglePassword(id, icon) {
+      const input = document.getElementById(id);
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      }
+    }
+
+    function showAlert(msg, type = "error") {
+      const box = document.getElementById("alertBox");
+      box.textContent = msg;
+      box.className = `mb-4 px-4 py-3 rounded-lg text-sm font-medium text-center ${type === "error"
+        ? "bg-red-100 border border-red-400 text-red-700"
+        : "bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md"
+        }`;
+      box.classList.remove("hidden", "opacity-0");
+      setTimeout(() => {
+        box.classList.add("opacity-0");
+        setTimeout(() => box.classList.add("hidden"), 500);
+      }, 3000);
+    }
+
+    function validateForm() {
+      const nip = document.getElementById("nip").value.trim();
+      const pw = document.getElementById("password").value.trim();
+      const cpw = document.getElementById("confirm_password").value.trim();
+      if (!/^\d{16}$/.test(nip)) {
+        showAlert("❌ NIP harus tepat 16 digit dan angka.");
+        return false;
+      }
+      if (pw.length < 8) {
+        showAlert("❌ Password minimal 8 karakter.");
+        return false;
+      }
+      if (!/^[A-Z]/.test(pw)) {
+        showAlert("❌ Huruf pertama password harus huruf besar.");
+        return false;
+      }
+      if (!/\d/.test(pw)) {
+        showAlert("❌ Password harus mengandung angka.");
+        return false;
+      }
+      if (pw !== cpw) {
+        showAlert("❌ Password dan konfirmasi password tidak sama.");
+        return false;
+      }
+      showAlert("✅ Data Guru PM siap disimpan.", "success");
+      return true;
+    }
+
+    window.onload = () => {
+      document.getElementById("password").type = "text";
+      document.getElementById("confirm_password").type = "text";
+      document.querySelectorAll('i.fa-eye-slash').forEach(i => i.classList.replace('fa-eye-slash', 'fa-eye'));
+    }
+  </script>
+
+</body>
+</html>
